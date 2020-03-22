@@ -74,16 +74,18 @@ func (s *server) WriteData(msg *pb.WriteRequest, stream pb.WorkerServer_WriteDat
 
 // Generate a random string of A-Z or a-z 0-9 chars with len = l
 func getRandomString(len int) string {
-	// generates random integeer between min and max
+	// set seed.
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	// generates random integer between min and max
 	randInt := func(min, max int) int {
-		return min + rand.Intn(max-min)
+		return min + r.Intn(max-min)
 	}
 	// 48-57 ->  0 - 9
 	// 97-122 -> a - z
 	// 65-90 -> A - Z
 	bytes := make([]byte, len)
 	for i := 0; i < len; i++ {
-		flip := rand.Intn(3)
+		flip := r.Intn(3)
 		switch flip {
 		case 0:
 			bytes[i] = byte(randInt(48, 57))

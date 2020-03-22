@@ -1,0 +1,6 @@
+  parameters:
+    grpc:
+      port: ":50051"
+      host: 192.168.99.100
+    etcd:
+      host: http://etcd:2379

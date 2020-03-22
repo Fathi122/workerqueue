@@ -123,6 +123,8 @@ func main() {
 	var grpcErr error
 
 	log.SetLevel(log.DebugLevel)
+	log.Debugln("------ Starting Client ------")
+
 	grpcPool, grpcErr = gpool.New(createConnection, 0, 5, time.Second)
 	if grpcErr != nil {
 		grpcPool = nil

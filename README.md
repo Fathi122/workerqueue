@@ -12,17 +12,24 @@ cd certs
 protoc -I workerproto/ workerproto/workerpro.proto --go_out=plugins=grpc:./workerproto
 ```
 
-## build client
+## start client
 
 ```
-go build -o workerclient/workerclient workerclient/main.go
+./runclient.sh
 ```
 
 ## build and run server
 
+- start server
 ```
-docker-compose up
+./runserver.sh start
 ```
+
+- stop server
+```
+./runserver.sh stop
+```
+
 ## test commands
 
 - write test data to etcd

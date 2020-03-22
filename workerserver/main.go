@@ -83,7 +83,7 @@ func getRandomString(len int) string {
 	// 65-90 -> A - Z
 	bytes := make([]byte, len)
 	for i := 0; i < len; i++ {
-		flip := rand.Intn(2)
+		flip := rand.Intn(3)
 		switch flip {
 		case 0:
 			bytes[i] = byte(randInt(48, 57))

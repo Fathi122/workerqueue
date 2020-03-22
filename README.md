@@ -25,7 +25,7 @@ docker-compose up
 ```
 ## test commands
 
-- write test data
+- write test data to etcd
 
 ```
 curl -XPOST "http://localhost:8080/datastore?data='test%20data%20to%20write'"

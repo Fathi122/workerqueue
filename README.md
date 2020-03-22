@@ -3,7 +3,6 @@
 ## generate grpc certs
 
 ```
-cd certs
 ./gengrpcert.sh
 ```
 ## re-generate grpc protobuf

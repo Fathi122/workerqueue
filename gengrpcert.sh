@@ -1,8 +1,10 @@
 #!/bin/bash
 
+cd certs
 #clean any previous certs
 find . -type f -name server.\* -exec rm -f {} \;
 find . -type f -name ca.\* -exec rm -f {} \;
+
 # generate new
 openssl genrsa -out ca.key 4096
 openssl req -new -x509 -key ca.key -sha256 -subj "//C=PO\ST=NB\O=Test" -days 365 -out ca.crt

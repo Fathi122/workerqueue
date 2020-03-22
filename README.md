@@ -28,7 +28,7 @@ docker-compose up
 - write test data
 
 ```
-curl -XPOST "http://localhost:8080/datastore?data='test%data%20to%20write'"
+curl -XPOST "http://localhost:8080/datastore?data='test%20data%20to%20write'"
 ```
 
 - read test data with key returned

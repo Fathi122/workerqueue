@@ -16,6 +16,7 @@ import (
 
 	"github.com/coreos/etcd/clientv3"
 	"go.etcd.io/etcd/etcdserver/api/v3rpc/rpctypes"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 // server is used to implement WorkerServer services.
@@ -117,6 +118,24 @@ func main() {
 	// get Config
 	serverConfig := c.GetConfig()
 	log.SetLevel(log.DebugLevel)
+	/*f, err := os.OpenFile("/tmp/log/workserver.log", os.O_RDWR|os.O_CREATE, 0755)
+	if err != nil {
+		panic("Failed to create trace file !")
+	}
+	defer f.Close()
+	*/
+
+	// set log to file with logrotate from lumberjack
+	log.SetOutput(&lumberjack.Logger{
+		Filename:   "/tmp/log/workserver.log",
+		MaxSize:    1, // megabytes
+		MaxBackups: 3,
+		MaxAge:     1,    //days
+		Compress:   true, // disabled by default
+	})
+
+	// set log json format
+	log.SetFormatter(&log.JSONFormatter{})
 
 	// init etcd client
 	etcdClient = initEtcd(serverConfig)

@@ -1,8 +1,13 @@
-version: '2'
+version: '3.3'
 
 networks:
   app-tier:
     driver: bridge
+volumes:
+  data02:
+    driver: local
+  shared-content:
+    driver: local
 services:
   workerserver:
     build:
@@ -12,6 +17,8 @@ services:
       - 50051:50051  
     networks:
       - app-tier
+    volumes:
+      - shared-content:/tmp/log
     links: 
       - etcd
   etcd:
@@ -22,5 +29,44 @@ services:
     ports:
       - 2379:2379
       - 2380:2380
+    networks:
+      - app-tier
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+    environment:
+      - ELASTICSEARCH_PORT_NUMBER=9200
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    networks:
+      - app-tier
+    volumes:
+      - data02:/usr/share/elasticsearch/data
+  fluentd:
+    build:
+      context: ./fluentd/.
+      dockerfile: Dockerfile
+    volumes:
+      - shared-content:/opt/log
+    environment:
+      - FLUENTD_CONF=fluent.conf
+      - FLUENTD_OPT=-v
+    links:
+      - "elasticsearch"
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+    networks:
+      - app-tier
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.8.0
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+    links:
+      - elasticsearch
+    ports:
+      - "5601:5601"
     networks:
       - app-tier

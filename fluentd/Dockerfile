@@ -2,11 +2,12 @@
 FROM fluent/fluentd:v1.11-debian-1
 
 USER root
+ARG CONF_FILE
 
 RUN buildDeps="sudo make gcc g++ libc-dev" \
  && apt-get update \
  && apt-get install -y --no-install-recommends $buildDeps \
- && sudo gem install fluent-plugin-elasticsearch \
+ && sudo gem install fluent-plugin-elasticsearch fluent-plugin-mongo\
  && sudo gem sources --clear-all \
  && SUDO_FORCE_REMOVE=yes \
     apt-get purge -y --auto-remove \
@@ -16,7 +17,7 @@ RUN buildDeps="sudo make gcc g++ libc-dev" \
  && rm -rf /tmp/* /var/tmp/* /usr/lib/ruby/gems/*/cache/*.gem \
  && mkdir -p /opt/log  && chown -R fluent:fluent /opt/log
 
-COPY fluent.conf /fluentd/etc/
+COPY fluent$CONF_FILE.conf /fluentd/etc/fluent.conf
 
 COPY entrypoint.sh /bin/
 RUN chmod +x /bin/entrypoint.sh

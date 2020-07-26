@@ -21,6 +21,7 @@ services:
       - shared-content:/tmp/log
     links: 
       - etcd
+    restart: always
   etcd:
     image: 'bitnami/etcd:latest'
     environment:
@@ -31,6 +32,7 @@ services:
       - 2380:2380
     networks:
       - app-tier
+    restart: always
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
     environment:
@@ -43,10 +45,13 @@ services:
       - app-tier
     volumes:
       - data02:/usr/share/elasticsearch/data
+    restart: always
   fluentd:
     build:
       context: ./fluentd/.
       dockerfile: Dockerfile
+      args:
+        CONF_FILE: es
     volumes:
       - shared-content:/opt/log
     environment:
@@ -59,6 +64,7 @@ services:
       - "24224:24224/udp"
     networks:
       - app-tier
+    restart: always
   kibana:
     image: docker.elastic.co/kibana/kibana:7.8.0
     environment:
@@ -70,3 +76,4 @@ services:
       - "5601:5601"
     networks:
       - app-tier
+    restart: always

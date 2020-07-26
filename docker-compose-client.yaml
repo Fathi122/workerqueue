@@ -1,0 +1,56 @@
+version: '3.3'
+
+networks:
+  clientapp-tier:
+    driver: bridge
+volumes:
+  data01:
+    driver: local
+  shared-content:
+    driver: local
+  dbinit-content:
+    driver: local
+services:
+  workerclient:
+    build:
+      context: .
+      dockerfile: workerclient/Dockerfile
+    ports:
+      - 8080:8080  
+    networks:
+      - clientapp-tier
+    volumes:
+      - shared-content:/tmp/log
+    links: 
+      - mongo
+  mongo:
+    image: 'mongo:3.6'
+    ports:
+      - 27017:27017
+    networks:
+      - clientapp-tier
+    volumes:
+      - data01:/data/db
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: mongolog
+      MONGO_INITDB_ROOT_USERNAME: fluentd
+      MONGO_INITDB_ROOT_PASSWORD: fluentd
+  fluentdmongo:
+    build:
+      context: ./fluentd/.
+      dockerfile: Dockerfile
+      args:
+        CONF_FILE: mongo
+    volumes:
+      - shared-content:/opt/log
+    environment:
+      - FLUENTD_CONF=fluent.conf
+      - FLUENTD_OPT=-v
+    links:
+      - mongo
+    ports:
+      - "24225:24225"
+      - "24225:24225/udp"
+    networks:
+      - clientapp-tier

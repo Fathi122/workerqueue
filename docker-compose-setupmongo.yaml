@@ -1,0 +1,26 @@
+version: '3.3'
+
+networks:
+  clientapp-tier:
+    driver: bridge
+volumes:
+  data01:
+    driver: local
+
+services:
+  mongo:
+    build:
+      context: ./mongoinit/.
+      dockerfile: Dockerfile
+    ports:
+      - 27017:27017
+    networks:
+      - clientapp-tier
+    volumes:
+      - data01:/data/db
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: mongolog
+      MONGO_INITDB_ROOT_USERNAME: fluentd
+      MONGO_INITDB_ROOT_PASSWORD: fluentd
+

@@ -10,4 +10,5 @@ require (
 	github.com/spf13/viper v1.6.2
 	go.etcd.io/etcd v3.3.19+incompatible
 	google.golang.org/grpc v1.28.0
+	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )

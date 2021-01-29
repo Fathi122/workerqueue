@@ -9,6 +9,7 @@ import (
 
 	c "github.com/Fathi122/workerqueue/conf"
 	pc "github.com/Fathi122/workerqueue/workerproto"
+	"gopkg.in/natefinch/lumberjack.v2"
 
 	log "github.com/sirupsen/logrus"
 
@@ -123,6 +124,18 @@ func main() {
 	var grpcErr error
 
 	log.SetLevel(log.DebugLevel)
+
+	log.SetOutput(&lumberjack.Logger{
+		Filename:   "/tmp/log/workclient.log",
+		MaxSize:    1, // megabytes
+		MaxBackups: 3,
+		MaxAge:     1,    //days
+		Compress:   true, // disabled by default
+	})
+
+	// set log json format
+	log.SetFormatter(&log.JSONFormatter{})
+
 	log.Debugln("------ Starting Client ------")
 
 	grpcPool, grpcErr = gpool.New(createConnection, 0, 5, time.Second)
@@ -150,7 +163,7 @@ func main() {
 		case "GET":
 			keyName, ok := req.URL.Query()["key"]
 			if !ok || len(keyName[0]) < 1 {
-				log.Debugln("Url Param 'Key' is missing")
+				log.Errorln("Url Param 'Key' is missing")
 				fmt.Fprintf(w, "Url Param 'Key' is missing")
 				return
 			}
